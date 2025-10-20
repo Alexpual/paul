@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CityRide Taxi Service</title>
+    <style>
+        /* Global Styles */
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        /* Header Styles */
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo h1 {
+            font-size: 1.8rem;
+            margin-left: 10px;
+        }
+        
+        .logo-icon {
+            font-size: 2rem;
+            color: var(--secondary-color);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 1.5rem;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+        
+        nav ul li a:hover, 
+        nav ul li a.active {
+            color: var(--secondary-color);
+            background-color: rgba(255,255,255,0.1);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            color: white;
+        }
+        
+        .user-info span {
+            margin-right: 1rem;
+        }
+        
+        .logout-btn {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        /* Main Content Styles */
+        main {
+            min-height: calc(100vh - 160px);
+            padding: 2rem 0;
+        }
+        
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .page-header h2 {
+            color: var(--primary-color);
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-header p {
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* Form Styles */
+        .form-container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        .error-message {
+            color: var(--danger-color);
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-align: center;
+            text-decoration: none;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+        
+        .form-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+        
+        .form-footer a {
+            color: var(--secondary-color);
+            text-decoration: none;
+        }
+        
+        /* Home Page Styles */
+        .hero {
+            background: linear-gradient(rgba(44, 62, 80, 0.8), rgba(44, 62, 80, 0.8)), url('https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        
+        .hero h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .feature-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .feature-card h3 {
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+        
+        /* Booking Page Styles */
+        .booking-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .taxi-option {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+        
+        .taxi-option:hover {
+            transform: translateY(-5px);
+        }
+        
+        .taxi-option.selected {
+            border: 2px solid var(--secondary-color);
+        }
+        
+        .taxi-image {
+            height: 150px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .taxi-details {
+            padding: 1.5rem;
+        }
+        
+        .taxi-details h3 {
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+        
+        .taxi-price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .taxi-features {
+            list-style: none;
+            margin-top: 1rem;
+        }
+        
+        .taxi-features li {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .taxi-features li:before {
+            content: "✓";
+            color: var(--success-color);
+            margin-right: 0.5rem;
+            font-weight: bold;
+        }
+        
+        /* Profile Page Styles */
+        .profile-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .profile-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2.5rem;
+            color: white;
+        }
+        
+        .profile-body {
+            padding: 2rem;
+        }
+        
+        .profile-info {
+            margin-bottom: 1.5rem;
+        }
+        
+        .profile-info h3 {
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+            border-bottom: 1px solid #eee;
+            padding-bottom: 0.5rem;
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        
+        .info-label {
+            font-weight: 500;
+            color: #666;
+        }
+        
+        .profile-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        /* Footer Styles */
+        footer {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 2rem;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+        
+        .footer-section p, .footer-section a {
+            color: #ddd;
+            margin-bottom: 0.5rem;
+            display: block;
+            text-decoration: none;
+        }
+        
+        .footer-section a:hover {
+            color: white;
+        }
+        
+        .copyright {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            nav ul {
+                margin-top: 1rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            nav ul li {
+                margin: 0.5rem;
+            }
+            
+            .user-info {
+                margin-top: 1rem;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+            }
+            
+            .mobile-nav {
+                display: none;
+                width: 100%;
+                margin-top: 1rem;
+            }
+            
+            .mobile-nav.active {
+                display: block;
+            }
+            
+            .mobile-nav ul {
+                flex-direction: column;
+            }
+            
+            .mobile-nav ul li {
+                margin: 0.5rem 0;
+            }
+            
+            .hero h2 {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .profile-actions {
+                flex-direction: column;
+            }
+        }
+        
+        /* Success Message */
+        .success-message {
+            background-color: var(--success-color);
+            color: white;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            text-align: center;
+            display: none;
+        }
+        
+        /* Login Required Message */
+        .login-required {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .login-required h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">🚕</span>
+                    <h1>CityRide</h1>
+                </div>
+                <button class="mobile-menu-btn">☰</button>
+                <nav class="mobile-nav">
+                    <ul>
+                        <li><a href="#" class="nav-link active" data-page="home">Home</a></li>
+                        <li id="mobile-login-nav"><a href="#" class="nav-link" data-page="login">Login</a></li>
+                        <li id="mobile-registration-nav"><a href="#" class="nav-link" data-page="registration">Register</a></li>
+                        <li><a href="#" class="nav-link" data-page="booking">Book a Ride</a></li>
+                        <li id="mobile-profile-nav"><a href="#" class="nav-link" data-page="profile">My Profile</a></li>
+                    </ul>
+                    <div id="mobile-user-info" class="user-info" style="display: none; margin-top: 1rem;">
+                        <span id="mobile-welcome-msg"></span>
+                        <button class="logout-btn" id="mobile-logout-btn">Logout</button>
+                    </div>
+                </nav>
+                <nav class="desktop-nav">
+                    <ul>
+                        <li><a href="#" class="nav-link active" data-page="home">Home</a></li>
+                        <li id="desktop-login-nav"><a href="#" class="nav-link" data-page="login">Login</a></li>
+                        <li id="desktop-registration-nav"><a href="#" class="nav-link" data-page="registration">Register</a></li>
+                        <li><a href="#" class="nav-link" data-page="booking">Book a Ride</a></li>
+                        <li id="desktop-profile-nav"><a href="#" class="nav-link" data-page="profile">My Profile</a></li>
+                    </ul>
+                </nav>
+                <div id="desktop-user-info" class="user-info" style="display: none;">
+                    <span id="desktop-welcome-msg"></span>
+                    <button class="logout-btn" id="desktop-logout-btn">Logout</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container">
+            <!-- Home Page -->
+            <section id="home" class="page active">
+                <div class="hero">
+                    <h2>Fast, Safe & Reliable Taxi Service</h2>
+                    <p>Book a ride in seconds and get to your destination comfortably and on time.</p>
+                    <a href="#" class="btn" data-page="booking">Book a Ride Now</a>
+                </div>
+                
+                <div class="page-header">
+                    <h2>Why Choose CityRide?</h2>
+                    <p>We provide premium taxi services with a focus on safety, comfort, and reliability.</p>
+                </div>
+                
+                <div class="features">
+                    <div class="feature-card">
+                        <div class="feature-icon">🚗</div>
+                        <h3>Wide Range of Vehicles</h3>
+                        <p>Choose from economy cars to luxury vehicles for any occasion.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⏱️</div>
+                        <h3>Quick Pickup</h3>
+                        <p>Average wait time of just 5 minutes in most urban areas.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💰</div>
+                        <h3>Affordable Pricing</h3>
+                        <p>Competitive rates with no hidden charges or surge pricing.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⭐</div>
+                        <h3>Rated Drivers</h3>
+                        <p>All our drivers are professionally trained and highly rated.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Login Page -->
+            <section id="login" class="page">
+                <div class="page-header">
+                    <h2>Login to Your Account</h2>
+                    <p>Enter your credentials to access your CityRide account.</p>
+                </div>
+                
+                <div class="form-container">
+                    <div class="success-message" id="login-success">
+                        Login successful! Redirecting...
+                    </div>
+                    
+                    <form id="login-form">
+                        <div class="form-group">
+                            <label for="login-email">Email Address</label>
+                            <input type="email" id="login-email" class="form-control" placeholder="Enter your email">
+                            <div class="error-message" id="login-email-error">Please enter a valid email address</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="login-password">Password</label>
+                            <input type="password" id="login-password" class="form-control" placeholder="Enter your password">
+                            <div class="error-message" id="login-password-error">Password must be at least 6 characters</div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-block">Login</button>
+                        
+                        <div class="form-footer">
+                            <p>Don't have an account? <a href="#" data-page="registration">Register here</a></p>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Registration Page -->
+            <section id="registration" class="page">
+                <div class="page-header">
+                    <h2>Create an Account</h2>
+                    <p>Join CityRide today and enjoy our premium taxi services.</p>
+                </div>
+                
+                <div class="form-container">
+                    <div class="success-message" id="registration-success">
+                        Registration successful! You can now login.
+                    </div>
+                    
+                    <form id="registration-form">
+                        <div class="form-group">
+                            <label for="reg-name">Full Name</label>
+                            <input type="text" id="reg-name" class="form-control" placeholder="Enter your full name">
+                            <div class="error-message" id="reg-name-error">Please enter your full name</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="reg-email">Email Address</label>
+                            <input type="email" id="reg-email" class="form-control" placeholder="Enter your email">
+                            <div class="error-message" id="reg-email-error">Please enter a valid email address</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="reg-phone">Phone Number</label>
+                            <input type="tel" id="reg-phone" class="form-control" placeholder="Enter your phone number">
+                            <div class="error-message" id="reg-phone-error">Please enter a valid phone number</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="reg-password">Password</label>
+                            <input type="password" id="reg-password" class="form-control" placeholder="Create a password">
+                            <div class="error-message" id="reg-password-error">Password must be at least 6 characters</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="reg-confirm-password">Confirm Password</label>
+                            <input type="password" id="reg-confirm-password" class="form-control" placeholder="Confirm your password">
+                            <div class="error-message" id="reg-confirm-password-error">Passwords do not match</div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-block">Register</button>
+                        
+                        <div class="form-footer">
+                            <p>Already have an account? <a href="#" data-page="login">Login here</a></p>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Booking Page -->
+            <section id="booking" class="page">
+                <div class="page-header">
+                    <h2>Book Your Ride</h2>
+                    <p>Select your preferred vehicle and provide trip details.</p>
+                </div>
+                
+                <div class="form-container">
+                    <div class="success-message" id="booking-success">
+                        Booking confirmed! Your driver will arrive shortly.
+                    </div>
+                    
+                    <form id="booking-form">
+                        <div class="form-group">
+                            <label for="pickup-location">Pickup Location</label>
+                            <input type="text" id="pickup-location" class="form-control" placeholder="Enter pickup address">
+                            <div class="error-message" id="pickup-location-error">Please enter a pickup location</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="destination">Destination</label>
+                            <input type="text" id="destination" class="form-control" placeholder="Enter destination address">
+                            <div class="error-message" id="destination-error">Please enter a destination</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="booking-date">Date</label>
+                            <input type="date" id="booking-date" class="form-control">
+                            <div class="error-message" id="booking-date-error">Please select a date</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="booking-time">Time</label>
+                            <input type="time" id="booking-time" class="form-control">
+                            <div class="error-message" id="booking-time-error">Please select a time</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Select Vehicle Type</label>
+                            <div class="booking-options">
+                                <div class="taxi-option" data-type="economy">
+                                    <div class="taxi-image" style="background-image: url('https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');"></div>
+                                    <div class="taxi-details">
+                                        <h3>Economy</h3>
+                                        <div class="taxi-price">$2.50/mile</div>
+                                        <p>Comfortable and affordable for everyday rides</p>
+                                        <ul class="taxi-features">
+                                            <li>Up to 4 passengers</li>
+                                            <li>Standard luggage space</li>
+                                            <li>Air conditioning</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                
+                                <div class="taxi-option" data-type="comfort">
+                                    <div class="taxi-image" style="background-image: url('https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');"></div>
+                                    <div class="taxi-details">
+                                        <h3>Comfort</h3>
+                                        <div class="taxi-price">$3.50/mile</div>
+                                        <p>Extra space and comfort for a better ride</p>
+                                        <ul class="taxi-features">
+                                            <li>Up to 4 passengers</li>
+                                            <li>Extra legroom</li>
+                                            <li>Premium interior</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                
+                                <div class="taxi-option" data-type="luxury">
+                                    <div class="taxi-image" style="background-image: url('https://images.unsplash.com/photo-1555212697-194d092e3b8f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');"></div>
+                                    <div class="taxi-details">
+                                        <h3>Luxury</h3>
+                                        <div class="taxi-price">$5.00/mile</div>
+                                        <p>Premium vehicles for special occasions</p>
+                                        <ul class="taxi-features">
+                                            <li>Up to 4 passengers</li>
+                                            <li>Luxury sedan or SUV</li>
+                                            <li>Professional chauffeur</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="error-message" id="vehicle-type-error">Please select a vehicle type</div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-block">Confirm Booking</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Profile Page -->
+            <section id="profile" class="page">
+                <div id="profile-content">
+                    <!-- This content will be dynamically loaded based on the logged-in user -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>About CityRide</h3>
+                    <p>CityRide is a premium taxi service provider committed to offering safe, comfortable, and reliable transportation solutions.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <p>📞 (555) 123-4567</p>
+                    <p>✉️ support@cityride.com</p>
+                    <p>📍 123 Main Street, Cityville</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <a href="#" data-page="home">Home</a>
+                    <a href="#" data-page="booking">Book a Ride</a>
+                    <a href="#" data-page="login">Login</a>
+                    <a href="#" data-page="registration">Register</a>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Legal</h3>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Cookie Policy</a>
+                    <a href="#">Refund Policy</a>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2023 CityRide Taxi Service. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // User Management System
+        const UserManager = {
+            // Initialize with sample users if none exist
+            init: function() {
+                if (!localStorage.getItem('users')) {
+                    const sampleUsers = [
+                        {
+                            id: 1,
+                            name: 'John Doe',
+                            email: 'john@example.com',
+                            phone: '(555) 123-4567',
+                            password: 'password123',
+                            joinDate: '2023-01-15',
+                            rides: 24,
+                            miles: 187.5,
+                            favoriteVehicle: 'Comfort',
+                            rating: 4.8
+                        },
+                        {
+                            id: 2,
+                            name: 'Jane Smith',
+                            email: 'jane@example.com',
+                            phone: '(555) 987-6543',
+                            password: 'password123',
+                            joinDate: '2023-03-22',
+                            rides: 12,
+                            miles: 95.2,
+                            favoriteVehicle: 'Economy',
+                            rating: 4.9
+                        }
+                    ];
+                    localStorage.setItem('users', JSON.stringify(sampleUsers));
+                }
+                
+                // Check if user is already logged in
+                this.checkLoginStatus();
+            },
+            
+            // Get all users
+            getUsers: function() {
+                return JSON.parse(localStorage.getItem('users')) || [];
+            },
+            
+            // Save users to localStorage
+            saveUsers: function(users) {
+                localStorage.setItem('users', JSON.stringify(users));
+            },
+            
+            // Register a new user
+            register: function(userData) {
+                const users = this.getUsers();
+                
+                // Check if email already exists
+                if (users.find(user => user.email === userData.email)) {
+                    return { success: false, message: 'Email already registered' };
+                }
+                
+                // Create new user
+                const newUser = {
+                    id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
+                    name: userData.name,
+                    email: userData.email,
+                    phone: userData.phone,
+                    password: userData.password,
+                    joinDate: new Date().toISOString().split('T')[0],
+                    rides: 0,
+                    miles: 0,
+                    favoriteVehicle: 'Not set',
+                    rating: 0
+                };
+                
+                users.push(newUser);
+                this.saveUsers(users);
+                
+                return { success: true, message: 'Registration successful' };
+            },
+            
+            // Login user
+            login: function(email, password) {
+                const users = this.getUsers();
+                const user = users.find(u => u.email === email && u.password === password);
+                
+                if (user) {
+                    // Store logged in user info
+                    localStorage.setItem('currentUser', JSON.stringify(user));
+                    this.updateUI();
+                    return { success: true, user: user };
+                } else {
+                    return { success: false, message: 'Invalid email or password' };
+                }
+            },
+            
+            // Logout user
+            logout: function() {
+                localStorage.removeItem('currentUser');
+                this.updateUI();
+            },
+            
+            // Check if user is logged in
+            isLoggedIn: function() {
+                return localStorage.getItem('currentUser') !== null;
+            },
+            
+            // Get current user
+            getCurrentUser: function() {
+                return JSON.parse(localStorage.getItem('currentUser'));
+            },
+            
+            // Update user data
+            updateUser: function(userData) {
+                const users = this.getUsers();
+                const currentUser = this.getCurrentUser();
+                const userIndex = users.findIndex(u => u.id === currentUser.id);
+                
+                if (userIndex !== -1) {
+                    users[userIndex] = { ...users[userIndex], ...userData };
+                    this.saveUsers(users);
+                    localStorage.setItem('currentUser', JSON.stringify(users[userIndex]));
+                    this.updateUI();
+                    return true;
+                }
+                return false;
+            },
+            
+            // Add a ride to user's history
+            addRide: function(rideData) {
+                const currentUser = this.getCurrentUser();
+                if (!currentUser) return false;
+                
+                const updatedUser = {
+                    ...currentUser,
+                    rides: currentUser.rides + 1,
+                    miles: currentUser.miles + (rideData.miles || 0),
+                    favoriteVehicle: rideData.vehicleType || currentUser.favoriteVehicle
+                };
+                
+                return this.updateUser(updatedUser);
+            },
+            
+            // Check login status and update UI
+            checkLoginStatus: function() {
+                this.updateUI();
+            },
+            
+            // Update UI based on login status
+            updateUI: function() {
+                const isLoggedIn = this.isLoggedIn();
+                const loginNavs = document.querySelectorAll('#desktop-login-nav, #mobile-login-nav');
+                const registrationNavs = document.querySelectorAll('#desktop-registration-nav, #mobile-registration-nav');
+                const profileNavs = document.querySelectorAll('#desktop-profile-nav, #mobile-profile-nav');
+                const userInfos = document.querySelectorAll('#desktop-user-info, #mobile-user-info');
+                const welcomeMsgs = document.querySelectorAll('#desktop-welcome-msg, #mobile-welcome-msg');
+                
+                if (isLoggedIn) {
+                    const user = this.getCurrentUser();
+                    loginNavs.forEach(nav => nav.style.display = 'none');
+                    registrationNavs.forEach(nav => nav.style.display = 'none');
+                    profileNavs.forEach(nav => nav.style.display = 'block');
+                    userInfos.forEach(info => info.style.display = 'flex');
+                    welcomeMsgs.forEach(msg => msg.textContent = `Welcome, ${user.name.split(' ')[0]}!`);
+                } else {
+                    loginNavs.forEach(nav => nav.style.display = 'block');
+                    registrationNavs.forEach(nav => nav.style.display = 'block');
+                    profileNavs.forEach(nav => nav.style.display = 'none');
+                    userInfos.forEach(info => info.style.display = 'none');
+                }
+            },
+            
+            // Load profile page content
+            loadProfile: function() {
+                const profileContent = document.getElementById('profile-content');
+                const isLoggedIn = this.isLoggedIn();
+                
+                if (!isLoggedIn) {
+                    profileContent.innerHTML = `
+                        <div class="login-required">
+                            <h3>Login Required</h3>
+                            <p>Please log in to view your profile.</p>
+                            <a href="#" class="btn" data-page="login" style="margin-top: 1rem;">Login Now</a>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                const user = this.getCurrentUser();
+                const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase();
+                
+                profileContent.innerHTML = `
+                    <div class="page-header">
+                        <h2>My Profile</h2>
+                        <p>View and manage your account information.</p>
+                    </div>
+                    
+                    <div class="profile-card">
+                        <div class="profile-header">
+                            <div class="profile-avatar">${initials}</div>
+                            <h2>${user.name}</h2>
+                            <p>Member since ${user.joinDate}</p>
+                        </div>
+                        
+                        <div class="profile-body">
+                            <div class="profile-info">
+                                <h3>Personal Information</h3>
+                                <div class="info-item">
+                                    <span class="info-label">Full Name:</span>
+                                    <span>${user.name}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Email:</span>
+                                    <span>${user.email}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Phone:</span>
+                                    <span>${user.phone}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Member Since:</span>
+                                    <span>${user.joinDate}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="profile-info">
+                                <h3>Ride Statistics</h3>
+                                <div class="info-item">
+                                    <span class="info-label">Total Rides:</span>
+                                    <span>${user.rides}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Miles Traveled:</span>
+                                    <span>${user.miles} miles</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Favorite Vehicle:</span>
+                                    <span>${user.favoriteVehicle}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Average Rating:</span>
+                                    <span>⭐ ${user.rating}/5</span>
+                                </div>
+                            </div>
+                            
+                            <div class="profile-actions">
+                                <button class="btn" id="edit-profile-btn">Edit Profile</button>
+                                <button class="btn" style="background: var(--accent-color);" id="change-password-btn">Change Password</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        };
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize user management
+            UserManager.init();
+            
+            // Mobile menu toggle
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const mobileNav = document.querySelector('.mobile-nav');
+            
+            mobileMenuBtn.addEventListener('click', function() {
+                mobileNav.classList.toggle('active');
+            });
+            
+            // Page navigation
+            const navLinks = document.querySelectorAll('.nav-link');
+            const pages = document.querySelectorAll('.page');
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Update active nav link
+                    navLinks.forEach(nav => nav.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show selected page
+                    const targetPage = this.getAttribute('data-page');
+                    pages.forEach(page => {
+                        page.classList.remove('active');
+                        if (page.id === targetPage) {
+                            page.classList.add('active');
+                            
+                            // Load profile if needed
+                            if (targetPage === 'profile') {
+                                UserManager.loadProfile();
+                            }
+                        }
+                    });
+                    
+                    // Close mobile menu if open
+                    mobileNav.classList.remove('active');
+                });
+            });
+            
+            // Taxi selection in booking page
+            const taxiOptions = document.querySelectorAll('.taxi-option');
+            taxiOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    taxiOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                });
+            });
+            
+            // Logout functionality
+            document.getElementById('desktop-logout-btn').addEventListener('click', function() {
+                UserManager.logout();
+            });
+            
+            document.getElementById('mobile-logout-btn').addEventListener('click', function() {
+                UserManager.logout();
+            });
+            
+            // Form validation and submission
+            const loginForm = document.getElementById('login-form');
+            const registrationForm = document.getElementById('registration-form');
+            const bookingForm = document.getElementById('booking-form');
+            
+            // Login form validation
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('login-email');
+                const password = document.getElementById('login-password');
+                let isValid = true;
+                
+                // Validate email
+                if (!validateEmail(email.value)) {
+                    showError('login-email-error');
+                    isValid = false;
+                } else {
+                    hideError('login-email-error');
+                }
+                
+                // Validate password
+                if (password.value.length < 6) {
+                    showError('login-password-error');
+                    isValid = false;
+                } else {
+                    hideError('login-password-error');
+                }
+                
+                if (isValid) {
+                    const result = UserManager.login(email.value, password.value);
+                    
+                    if (result.success) {
+                        // Show success message
+                        document.getElementById('login-success').style.display = 'block';
+                        
+                        // Reset form
+                        loginForm.reset();
+                        
+                        // Redirect to profile after 2 seconds
+                        setTimeout(() => {
+                            document.querySelector('[data-page="profile"]').click();
+                        }, 2000);
+                    } else {
+                        showError('login-password-error');
+                        document.getElementById('login-password-error').textContent = result.message;
+                    }
+                }
+            });
+            
+            // Registration form validation
+            registrationForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('reg-name');
+                const email = document.getElementById('reg-email');
+                const phone = document.getElementById('reg-phone');
+                const password = document.getElementById('reg-password');
+                const confirmPassword = document.getElementById('reg-confirm-password');
+                let isValid = true;
+                
+                // Validate name
+                if (name.value.trim() === '') {
+                    showError('reg-name-error');
+                    isValid = false;
+                } else {
+                    hideError('reg-name-error');
+                }
+                
+                // Validate email
+                if (!validateEmail(email.value)) {
+                    showError('reg-email-error');
+                    isValid = false;
+                } else {
+                    hideError('reg-email-error');
+                }
+                
+                // Validate phone
+                if (!validatePhone(phone.value)) {
+                    showError('reg-phone-error');
+                    isValid = false;
+                } else {
+                    hideError('reg-phone-error');
+                }
+                
+                // Validate password
+                if (password.value.length < 6) {
+                    showError('reg-password-error');
+                    isValid = false;
+                } else {
+                    hideError('reg-password-error');
+                }
+                
+                // Validate confirm password
+                if (password.value !== confirmPassword.value) {
+                    showError('reg-confirm-password-error');
+                    isValid = false;
+                } else {
+                    hideError('reg-confirm-password-error');
+                }
+                
+                if (isValid) {
+                    const userData = {
+                        name: name.value,
+                        email: email.value,
+                        phone: phone.value,
+                        password: password.value
+                    };
+                    
+                    const result = UserManager.register(userData);
+                    
+                    if (result.success) {
+                        // Show success message
+                        document.getElementById('registration-success').style.display = 'block';
+                        
+                        // Reset form
+                        registrationForm.reset();
+                        
+                        // Redirect to login after 2 seconds
+                        setTimeout(() => {
+                            document.querySelector('[data-page="login"]').click();
+                        }, 2000);
+                    } else {
+                        showError('reg-email-error');
+                        document.getElementById('reg-email-error').textContent = result.message;
+                    }
+                }
+            });
+            
+            // Booking form validation
+            bookingForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                if (!UserManager.isLoggedIn()) {
+                    alert('Please log in to book a ride.');
+                    document.querySelector('[data-page="login"]').click();
+                    return;
+                }
+                
+                const pickupLocation = document.getElementById('pickup-location');
+                const destination = document.getElementById('destination');
+                const date = document.getElementById('booking-date');
+                const time = document.getElementById('booking-time');
+                const selectedVehicle = document.querySelector('.taxi-option.selected');
+                let isValid = true;
+                
+                // Validate pickup location
+                if (pickupLocation.value.trim() === '') {
+                    showError('pickup-location-error');
+                    isValid = false;
+                } else {
+                    hideError('pickup-location-error');
+                }
+                
+                // Validate destination
+                if (destination.value.trim() === '') {
+                    showError('destination-error');
+                    isValid = false;
+                } else {
+                    hideError('destination-error');
+                }
+                
+                // Validate date
+                if (date.value === '') {
+                    showError('booking-date-error');
+                    isValid = false;
+                } else {
+                    hideError('booking-date-error');
+                }
+                
+                // Validate time
+                if (time.value === '') {
+                    showError('booking-time-error');
+                    isValid = false;
+                } else {
+                    hideError('booking-time-error');
+                }
+                
+                // Validate vehicle selection
+                if (!selectedVehicle) {
+                    showError('vehicle-type-error');
+                    isValid = false;
+                } else {
+                    hideError('vehicle-type-error');
+                }
+                
+                if (isValid) {
+                    // Add ride to user's history
+                    const rideData = {
+                        vehicleType: selectedVehicle.getAttribute('data-type'),
+                        miles: Math.floor(Math.random() * 20) + 5 // Random distance between 5-25 miles
+                    };
+                    
+                    UserManager.addRide(rideData);
+                    
+                    // Show success message
+                    document.getElementById('booking-success').style.display = 'block';
+                    
+                    // Reset form
+                    bookingForm.reset();
+                    taxiOptions.forEach(opt => opt.classList.remove('selected'));
+                }
+            });
+            
+            // Helper functions
+            function validateEmail(email) {
+                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return re.test(email);
+            }
+            
+            function validatePhone(phone) {
+                const re = /^[\+]?[1-9][\d]{0,15}$/;
+                return re.test(phone.replace(/[\(\)\-\s]/g, ''));
+            }
+            
+            function showError(errorId) {
+                document.getElementById(errorId).style.display = 'block';
+            }
+            
+            function hideError(errorId) {
+                document.getElementById(errorId).style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
