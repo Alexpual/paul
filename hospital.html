@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta http-equiv="refresh" content="1000"/>
+  <title>TEVET Model Technical College — Student Health Clinic</title>
+  <style>
+    :root{
+      --bg:#f5f7fb; --card:#ffffff; --accent:#1f6feb; --muted:#6b7280; --success:#16a34a;
+      --glass: rgba(255,255,255,0.6);
+    }
+    .tevet-text{
+      color: #a53f0c;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter,Helvetica,Arial,sans-serif;background:var(--bg);color:#0f172a}
+
+    /* Layout */
+    .app{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+    @media (max-width:900px){.app{grid-template-columns:1fr} .sidebar{position:sticky;top:0;z-index:20}}
+
+    .sidebar{background: #d15919; padding: 8px;}
+    .brand{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+    .logo{overflow:clip;width:46px;height:46px;border-radius:10px;background:var(--glass);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--accent)}
+    .clinic-name{font-size:15px;font-weight:600}
+    .clinic-sub{color:rgba(255,255,255,0.86);font-size:13px}
+
+    nav ul{list-style:none;padding:0;margin:18px 0}
+    nav li{margin-bottom:8px}
+    .nav-link{display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;color:#dbeafe;text-decoration:none;font-weight:600}
+    .nav-link:hover{background:rgba(255,255,255,0.04)}
+    .nav-link.active{background:rgba(255,255,255,0.06);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.03)}
+
+    .profile-short{margin-top:20px;padding:12px;background:rgba(255,255,255,0.03);border-radius:8px}
+    .small{font-size:13px;color: #000000}
+
+    /* Header */
+    header{padding:18px 28px;background:transparent;display:flex;align-items:center;justify-content:space-between}
+    .search{display:flex;align-items:center;gap:10px}
+    .search input{padding:10px 12px;border-radius:10px;border:1px solid #e6eef9;background:var(--card);min-width:220px}
+    .actions{display:flex;gap:12px;align-items:center}
+    .btn{padding:8px 12px;border-radius:8px;border:none;background:var(--accent);color:#fff;font-weight:600;cursor:pointer}
+    .ghost{background:#532514;color:white;}
+
+    /* Main content */
+    main{padding:22px}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:18px}
+    @media(max-width:1000px){.grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:640px){.grid{grid-template-columns:1fr}}
+
+    .card{background:var(--card);padding:18px;border-radius:12px;box-shadow:0 6px 18px rgba(15,23,42,0.06)}
+    .card h3{margin:0 0 10px 0;font-size:16px}
+    .stat{font-size:26px;font-weight:700}
+    .muted{color:var(--muted);font-size:13px}
+
+    /* Tables & forms */
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:10px 12px;text-align:left;border-bottom:1px solid #eef2f7;font-size:14px}
+    th{background:transparent;color:var(--muted);font-weight:700}
+    .table-wrap{overflow:auto}
+
+    form .row{display:flex;gap:12px}
+    form .col{flex:1}
+    input,select,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #0e0e0f;background:var(--card)}
+    textarea{min-height:100px}
+    .actions-row{display:flex;justify-content:flex-end;gap:12px;margin-top:10px}
+
+    /* Tiny UI bits */
+    .chip{display:inline-block;padding:6px 10px;border-radius:999px;background:#eef2ff;color:var(--accent);font-weight:600}
+    .pill{padding:6px 10px;border-radius:8px;background:#f0fdf4;color:var(--success);font-weight:700}
+
+    /* Page layout within main area */
+    .page{display:none}
+    .page.active{display:block}
+    .page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+    .breadcrumbs{color:var(--muted);font-size:13px}
+
+    /* Responsive tweaks */
+    @media(max-width:900px){header{padding:12px} .sidebar{padding:12px;display:flex;gap:12px;overflow:auto}}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRGXDhxyoIfsR7vFfSVIuT0pVPiV6_H-UdeCw&s" width="50"/>
+        </div>
+        <div>
+          <div class="clinic-name">TEVET Model Technical</div>
+          <div class="clinic-sub">Student Health Clinic</div>
+        </div>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="#" class="nav-link active" data-target="dashboard">Dashboard</a></li>
+          <li><a href="#" class="nav-link" data-target="profile">Student Profile</a></li>
+          <li><a href="#" class="nav-link" data-target="records">Medical Records</a></li>
+          <!-- <li><a href="#" class="nav-link" data-target="visits">Visit Log</a></li> -->
+          <li><a href="#" class="nav-link" data-target="reports">Reporting</a></li>
+        </ul>
+      </nav>
+
+      <div class="profile-short">
+        <div class="small">Clinic Nurse</div>
+        <div style="font-weight:700;margin-top:6px">Dr. Gladys Kachamba</div>
+        <div class="small" style="margin-top:8px">Email: clinic@tevet.edu | Ext: 210</div>
+      </div>
+    </aside>
+
+    <section>
+      <header style="background-color: #a53f0c;">
+        <div class="search">
+          <input type="search" id="quickFind" placeholder="Search students by name">
+          <button class="btn ghost" id="quickSearch">Search</button>
+        </div>
+        <div class="actions">
+          <div class="small">Today • <span id="today"></span></div>
+          <!-- <button class="btn">New Visit</button> -->
+        </div>
+      </header>
+
+      <main>
+        <!-- Dashboard -->
+        <section id="dashboard" class="page active">
+          <div class="page-header">
+            <div>
+              <h2 style="margin:0; color:#d15919;" >Dashboard</h2>
+              <div class="breadcrumbs">Overview of clinic activity</div>
+            </div>
+            <div>
+              <span class="chip">Clinic Open</span>
+            </div>
+          </div>
+
+          <div class="grid">
+            <div class="card">
+              <h3>Students Registered</h3>
+              <div class="stat">1,234</div>
+              <div class="muted">Total active student profiles</div>
+            </div>
+            <div class="card">
+              <h3>Visits This Month</h3>
+              <div class="stat">198</div>
+              <div class="muted">Includes scheduled & walk-ins</div>
+            </div>
+            <div class="card">
+              <h3>Pending Lab Results</h3>
+              <div class="stat">12</div>
+              <div class="muted">Awaiting upload</div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-bottom:18px">
+            <h3>Recent Visits</h3>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr><th>Student</th><th>ID</th><th>Date</th><th>Reason</th><th>Doctor</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>James Chirwa</td><td>TV2025-014</td><td>2025-08-10</td><td>Fever</td><td>Dr. M Banda</td></tr>
+                  <tr><td>Patricia Tembo</td><td>TV2024-003</td><td>2025-08-09</td><td>Injury</td><td>Nurse F. Kunda</td></tr>
+                  <tr><td>Emmanuel Mwansa</td><td>TV2025-118</td><td>2025-08-08</td><td>Follow-up</td><td>Dr. M Banda</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- Student Profile -->
+        <section id="profile" class="page">
+          <div class="page-header">
+            <div>
+              <h2 style="margin:0" class="tevet-text">Student Profile</h2>
+              <div class="breadcrumbs">View and edit student details</div>
+            </div>
+            <div class="pill">Balance: K150,000.00</div>
+          </div>
+
+          <div class="card" style="margin-bottom:18px">
+            <h3>Profile Details</h3>
+            <div style="display:flex;gap:18px;align-items:center">
+              <div style="width:120px;height:120px;border-radius:10px;background:#eef2f7"></div>
+              <div>
+                <h3 style="margin:0">James Chirwa</h3>
+                <div class="muted">Student ID: TV2025-014</div>
+                <div style="margin-top:8px">Phone: +265 997 123 467 • Program: Electrical Installation</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Update Contact / Fees</h3>
+            <form>
+              <div class="row">
+                <div class="col"><label class="small">Phone</label><input></div>
+                <div class="col"><label class="small">Email</label><input></div>
+              </div>
+              <div class="row" style="margin-top:10px">
+                <div class="col"><label class="small">Fees Balance (K)</label><input></div>
+                <div class="col"><label class="small">Status</label>
+                  <select><option>Active</option><option>Suspended</option></select>
+                </div>
+              </div>
+              <div class="actions-row"><button class="btn" type="button">Save</button></div>
+            </form>
+          </div>
+        </section>
+
+        <!-- Medical Records -->
+        <section id="records" class="page">
+          <div class="page-header">
+            <div>
+              <h2 style="margin:0" class="tevet-text">Medical Records</h2>
+              <div class="breadcrumbs">Student medical history & lab results</div>
+            </div>
+            <div>
+              <button class="btn">Add Record</button>
+            </div>
+          </div>
+
+          <div class="card" style="margin-bottom:18px">
+            <h3>Medical History</h3>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Date</th><th>Diagnosis</th><th>Treatment</th><th>Attachments</th></tr></thead>
+                <tbody>
+                  <tr><td>2025-02-12</td><td>Malaria</td><td>Artemisinin</td><td><a href="#">LabReport_0212.pdf</a></td></tr>
+                  <tr><td>2024-11-03</td><td>Sprained Ankle</td><td>Bandage & Physio</td><td>-</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Upload Lab Result</h3>
+            <form>
+              <label class="small">Select student</label>
+              <input placeholder="Search by name or ID">
+              <label class="small" style="margin-top:8px">Result / File</label>
+              <input type="file">
+              <div class="actions-row"><button class="btn" type="button">Upload</button></div>
+            </form>
+          </div>
+        </section>
+
+        <!-- Visits -->
+        <section id="visits" class="page">
+          <div class="page-header">
+            <div>
+              <h2 style="margin:0">Visit Log</h2>
+              <div class="breadcrumbs">Record visits and follow-ups</div>
+            </div>
+            <div>
+              <button class="btn">New Visit</button>
+            </div>
+          </div>
+
+          <div class="card" style="margin-bottom:18px">
+            <h3>Record a Visit</h3>
+            <form>
+              <div class="row">
+                <div class="col"><label class="small">Student</label><input placeholder="TV2025-014"></div>
+                <div class="col"><label class="small">Date & Time</label><input type="datetime-local"></div>
+              </div>
+              <div style="margin-top:8px"><label class="small">Reason</label><textarea></textarea></div>
+              <div class="actions-row"><button class="btn" type="button">Save Visit</button></div>
+            </form>
+          </div>
+
+          <div class="card">
+            <h3>Upcoming Follow-ups</h3>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Student</th><th>Date</th><th>Purpose</th></tr></thead>
+                <tbody>
+                  <tr><td>Emmanuel Mwansa</td><td>2025-08-20</td><td>Blood Test Review</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- Reporting -->
+        <section id="reports" class="page">
+          <div class="page-header">
+            <div>
+              <h2 style="margin:0" class="tevet-text">Reporting</h2>
+              <div class="breadcrumbs">Generate statistics & export</div>
+            </div>
+            <div>
+              <button class="btn">Export CSV</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Quick Reports</h3>
+            <div style="display:flex;gap:12px;flex-wrap:wrap">
+              <div style="min-width:200px"><label class="small">Report Type</label>
+                <select><option>Disease prevalence</option><option>Visits by month</option><option>Pending results</option></select></div>
+              <div style="min-width:200px"><label class="small">From</label><input type="date"></div>
+              <div style="min-width:200px"><label class="small">To</label><input type="date"></div>
+              <div style="align-self:end"><button class="btn">Generate</button></div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </section>
+  </div>
+
+  <script>
+    // small client-side navigation (HTML+CSS app shell)
+    document.querySelectorAll('.nav-link').forEach(a=>{
+      a.addEventListener('click',e=>{
+        e.preventDefault();
+        document.querySelectorAll('.nav-link').forEach(x=>x.classList.remove('active'));
+        a.classList.add('active');
+        const target = a.dataset.target;
+        document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+        const el = document.getElementById(target);
+        if(el) el.classList.add('active');
+        window.scrollTo({top:0,behavior:'smooth'});
+      })
+    })
+
+    // fill today's date
+    const d = new Date();
+    const yyyy = d.getFullYear(), mm = String(d.getMonth()+1).padStart(2,'0'), dd = String(d.getDate()).padStart(2,'0');
+    document.getElementById('today').textContent = `${yyyy}-${mm}-${dd}`;
+
+    // quick search hint: this demo doesn't connect to a backend; in a real app you'd perform a query here
+    document.getElementById('quickSearch').addEventListener('click',()=>alert('This is a static demo. Integrate with a backend to search students.'));
+  </script>
+</body>
+</html>
