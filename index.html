@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ndalama Village Bank - Treasurer Module</title>
+    <style>
+        /* Base Styles */
+        :root {
+            --primary-color: #2c5f2d;
+            --secondary-color: #97bc62;
+            --accent-color: #fccb06;
+            --light-color: #f5f5f5;
+            --dark-color: #333;
+            --danger-color: #e74c3c;
+            --success-color: #2ecc71;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f9f9f9;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header Styles */
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo {
+            width: 60px;
+            height: 60px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 24px;
+        }
+        
+        .logo-text h1 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        
+        .logo-text p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        
+        nav a:hover, nav a.active {
+            background-color: rgba(255,255,255,0.2);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logout-btn {
+            background-color: var(--accent-color);
+            color: var(--primary-color);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: opacity 0.3s;
+        }
+        
+        .logout-btn:hover {
+            opacity: 0.9;
+        }
+        
+        /* Main Content Styles */
+        main {
+            min-height: calc(100vh - 160px);
+            padding: 30px 0;
+        }
+        
+        .page {
+            display: none;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        .page-header {
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .page-header h2 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+        }
+        
+        /* Dashboard Styles */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-card h3 {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .recent-activity {
+            background-color: white;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .recent-activity h3 {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+        
+        .activity-list {
+            list-style: none;
+        }
+        
+        .activity-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        /* Form Styles */
+        .form-container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+        }
+        
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #234a23;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+        }
+        
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+        
+        /* Table Styles */
+        .table-container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: #f8f9fa;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.875rem;
+        }
+        
+        /* Login Page Styles */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: var(--light-color);
+        }
+        
+        .login-box {
+            background-color: white;
+            border-radius: 8px;
+            padding: 40px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .login-logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .login-logo .logo {
+            margin: 0 auto 15px;
+            width: 80px;
+            height: 80px;
+            font-size: 32px;
+        }
+        
+        .alert {
+            padding: 12px 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        /* Footer Styles */
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="login-page" class="login-container">
+        <div class="login-box">
+            <div class="login-logo">
+                <div class="logo">NVB</div>
+                <h1>Ndalama Village Bank</h1>
+                <p>Treasurer Login</p>
+            </div>
+            
+            <div id="login-error" class="alert alert-danger" style="display: none;">
+                Invalid credentials. Please try again.
+            </div>
+            
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" class="form-control" placeholder="Enter username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" class="form-control" placeholder="Enter password" required>
+                </div>
+                
+                <button type="submit" class="btn" style="width: 100%;">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Application (Hidden until login) -->
+    <div id="app" style="display: none;">
+        <header>
+            <div class="container header-content">
+                <div class="logo-container">
+                    <div class="logo">NVB</div>
+                    <div class="logo-text">
+                        <h1>Ndalama Village Bank</h1>
+                        <p>Treasurer Module</p>
+                    </div>
+                </div>
+                
+                <nav>
+                    <ul>
+                        <li><a href="#" class="nav-link active" data-page="dashboard">Dashboard</a></li>
+                        <li><a href="#" class="nav-link" data-page="members">Members</a></li>
+                        <li><a href="#" class="nav-link" data-page="shares">Shares</a></li>
+                        <li><a href="#" class="nav-link" data-page="loans">Loans</a></li>
+                        <li><a href="#" class="nav-link" data-page="reports">Reports</a></li>
+                    </ul>
+                </nav>
+                
+                <div class="user-info">
+                    <span>Welcome, Treasurer</span>
+                    <button class="logout-btn" id="logout-btn">Logout</button>
+                </div>
+            </div>
+        </header>
+        
+        <main>
+            <div class="container">
+                <!-- Dashboard Page -->
+                <div id="dashboard" class="page active">
+                    <div class="page-header">
+                        <h2>Dashboard</h2>
+                    </div>
+                    
+                    <div class="stats-container">
+                        <div class="stat-card">
+                            <h3>Total Members</h3>
+                            <div class="stat-value" id="total-members">0</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <h3>Total Shares</h3>
+                            <div class="stat-value" id="total-shares">0</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <h3>Total Loans</h3>
+                            <div class="stat-value" id="total-loans">0</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <h3>Active Loans</h3>
+                            <div class="stat-value" id="active-loans">0</div>
+                        </div>
+                    </div>
+                    
+                    <div class="recent-activity">
+                        <h3>Recent Activity</h3>
+                        <ul class="activity-list" id="activity-list">
+                            <!-- Activity items will be added dynamically -->
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Members Page -->
+                <div id="members" class="page">
+                    <div class="page-header">
+                        <h2>Member Management</h2>
+                    </div>
+                    
+                    <div class="form-container">
+                        <h3>Add New Member</h3>
+                        <form id="add-member-form">
+                            <div class="form-group">
+                                <label for="member-name">Full Name</label>
+                                <input type="text" id="member-name" class="form-control" placeholder="Enter full name" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="member-phone">Phone Number</label>
+                                <input type="tel" id="member-phone" class="form-control" placeholder="Enter phone number" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="member-address">Address</label>
+                                <textarea id="member-address" class="form-control" rows="3" placeholder="Enter address"></textarea>
+                            </div>
+                            
+                            <button type="submit" class="btn">Add Member</button>
+                        </form>
+                    </div>
+                    
+                    <div class="table-container" style="margin-top: 30px;">
+                        <h3>All Members</h3>
+                        <table id="members-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Phone</th>
+                                    <th>Address</th>
+                                    <th>Date Joined</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Members will be added dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Shares Page -->
+                <div id="shares" class="page">
+                    <div class="page-header">
+                        <h2>Share Management</h2>
+                    </div>
+                    
+                    <div class="form-container">
+                        <h3>Record Share Purchase</h3>
+                        <form id="record-shares-form">
+                            <div class="form-group">
+                                <label for="share-member">Select Member</label>
+                                <select id="share-member" class="form-control" required>
+                                    <option value="">Select a member</option>
+                                    <!-- Options will be populated dynamically -->
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="share-amount">Share Amount</label>
+                                <input type="number" id="share-amount" class="form-control" placeholder="Enter amount" min="1" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="share-date">Date</label>
+                                <input type="date" id="share-date" class="form-control" required>
+                            </div>
+                            
+                            <button type="submit" class="btn">Record Shares</button>
+                        </form>
+                    </div>
+                    
+                    <div class="table-container" style="margin-top: 30px;">
+                        <h3>Share Transactions</h3>
+                        <table id="shares-table">
+                            <thead>
+                                <tr>
+                                    <th>Transaction ID</th>
+                                    <th>Member</th>
+                                    <th>Amount</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Share transactions will be added dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Loans Page -->
+                <div id="loans" class="page">
+                    <div class="page-header">
+                        <h2>Loan Management</h2>
+                    </div>
+                    
+                    <div class="form-container">
+                        <h3>Issue New Loan</h3>
+                        <form id="issue-loan-form">
+                            <div class="form-group">
+                                <label for="loan-member">Select Member</label>
+                                <select id="loan-member" class="form-control" >
+                                    <option value="">Select a member</option>
+                                    <!-- Options will be populated dynamically -->
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="loan-amount">Loan Amount</label>
+                                <input type="number" id="loan-amount" class="form-control" placeholder="Enter amount" min="1" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="loan-interest">Interest Rate (%)</label>
+                                <input type="number" id="loan-interest" class="form-control" placeholder="Enter interest rate" min="1" max="20" step="0.5" value="10" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="loan-term">Loan Term (months)</label>
+                                <input type="number" id="loan-term" class="form-control" placeholder="Enter term in months" min="1" max="24" value="12" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="loan-date">Issue Date</label>
+                                <input type="date" id="loan-date" class="form-control" required>
+                            </div>
+                            
+                            <button type="submit" class="btn">Issue Loan</button>
+                        </form>
+                    </div>
+                    
+                    <div class="table-container" style="margin-top: 30px;">
+                        <h3>Active Loans</h3>
+                        <table id="loans-table">
+                            <thead>
+                                <tr>
+                                    <th>Loan ID</th>
+                                    <th>Member</th>
+                                    <th>Amount</th>
+                                    <th>Interest</th>
+                                    <th>Term</th>
+                                    <th>Issue Date</th>
+                                    <th>Due Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Loans will be added dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Reports Page -->
+                <div id="reports" class="page">
+                    <div class="page-header">
+                        <h2>Reports & Summary</h2>
+                    </div>
+                    
+                    <div class="stats-container">
+                        <div class="stat-card">
+                            <h3>Total Members</h3>
+                            <div class="stat-value" id="report-total-members">0</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <h3>Total Shares Value</h3>
+                            <div class="stat-value" id="report-total-shares">0</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <h3>Total Loans Issued</h3>
+                            <div class="stat-value" id="report-total-loans">0</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <h3>Active Loans</h3>
+                            <div class="stat-value" id="report-active-loans">0</div>
+                        </div>
+                    </div>
+                    
+                    <div class="table-container" style="margin-top: 30px;">
+                        <h3>Financial Summary</h3>
+                        <table id="financial-summary-table">
+                            <thead>
+                                <tr>
+                                    <th>Description</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Total Shares Collected</td>
+                                    <td id="summary-total-shares">0</td>
+                                </tr>
+                                <tr>
+                                    <td>Total Loans Issued</td>
+                                    <td id="summary-total-loans">0</td>
+                                </tr>
+                                <tr>
+                                    <td>Total Interest Earned</td>
+                                    <td id="summary-total-interest">0</td>
+                                </tr>
+                                <tr>
+                                    <td>Total Repayments Received</td>
+                                    <td id="summary-total-repayments">0</td>
+                                </tr>
+                                <tr>
+                                    <td>Net Position</td>
+                                    <td id="summary-net-position">0</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="table-container" style="margin-top: 30px;">
+                        <h3>Member Shares Summary</h3>
+                        <table id="member-shares-table">
+                            <thead>
+                                <tr>
+                                    <th>Member ID</th>
+                                    <th>Name</th>
+                                    <th>Total Shares</th>
+                                    <th>Last Contribution</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Member shares will be added dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <div class="container">
+                <p>&copy; 2023 Ndalama Village Bank. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Data storage (simulating a database)
+        let members = JSON.parse(localStorage.getItem('members')) || [];
+        let shares = JSON.parse(localStorage.getItem('shares')) || [];
+        let loans = JSON.parse(localStorage.getItem('loans')) || [];
+        let activityLog = JSON.parse(localStorage.getItem('activityLog')) || [];
+        
+        // Treasurer credentials
+        const treasurerCredentials = {
+            username: 'alex',
+            password: 'kaya'
+        };
+        
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set current date for forms
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('share-date').value = today;
+            document.getElementById('loan-date').value = today;
+            
+            // Login form submission
+            document.getElementById('login-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                
+                if (username === treasurerCredentials.username && password === treasurerCredentials.password) {
+                    // Successful login
+                    document.getElementById('login-page').style.display = 'none';
+                    document.getElementById('app').style.display = 'block';
+                    updateDashboard();
+                    updateMembersTable();
+                    updateSharesTable();
+                    updateLoansTable();
+                    updateReports();
+                } else {
+                    // Failed login
+                    document.getElementById('login-error').style.display = 'block';
+                }
+            });
+            
+            // Logout functionality
+            document.getElementById('logout-btn').addEventListener('click', function() {
+                document.getElementById('app').style.display = 'none';
+                document.getElementById('login-page').style.display = 'flex';
+                document.getElementById('login-form').reset();
+                document.getElementById('login-error').style.display = 'none';
+            });
+            
+            // Navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const pageId = this.getAttribute('data-page');
+                    
+                    // Update active nav link
+                    document.querySelectorAll('.nav-link').forEach(nav => {
+                        nav.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Show selected page
+                    document.querySelectorAll('.page').forEach(page => {
+                        page.classList.remove('active');
+                    });
+                    document.getElementById(pageId).classList.add('active');
+                    
+                    // Update page-specific data
+                    if (pageId === 'dashboard') {
+                        updateDashboard();
+                    } else if (pageId === 'members') {
+                        updateMembersDropdowns();
+                        updateMembersTable();
+                    } else if (pageId === 'shares') {
+                        updateMembersDropdowns();
+                        updateSharesTable();
+                    } else if (pageId === 'loans') {
+                        updateMembersDropdowns();
+                        updateLoansTable();
+                    } else if (pageId === 'reports') {
+                        updateReports();
+                    }
+                });
+            });
+            
+            // Add member form
+            document.getElementById('add-member-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const name = document.getElementById('member-name').value;
+                const phone = document.getElementById('member-phone').value;
+                const address = document.getElementById('member-address').value;
+                
+                // Generate unique member ID
+                const memberId = 'MEM' + String(members.length + 1).padStart(3, '0');
+                
+                // Create new member
+                const newMember = {
+                    id: memberId,
+                    name: name,
+                    phone: phone,
+                    address: address,
+                    dateJoined: new Date().toISOString().split('T')[0]
+                };
+                
+                members.push(newMember);
+                saveData();
+                
+                // Log activity
+                logActivity(`New member registered: ${name} (${memberId})`);
+                
+                // Reset form and update UI
+                this.reset();
+                updateMembersDropdowns();
+                updateMembersTable();
+                updateDashboard();
+                updateReports();
+                
+                alert(`Member ${name} registered successfully with ID: ${memberId}`);
+            });
+            
+            // Record shares form
+            document.getElementById('record-shares-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+ 
+                const amount = parseInt(document.getElementById('share-amount').value);
+                const date = document.getElementById('share-date').value;
+                
+                // Find member
+                const member = members.find(m => m.id === memberId);
+                
+                if (!member) {
+                    alert('Please select a valid member');
+                    return;
+                }
+                
+                // Generate transaction ID
+                const transactionId = 'SH' + String(shares.length + 1).padStart(3, '0');
+                
+                // Create share record
+                const shareRecord = {
+                    id: transactionId,
+                    memberId: memberId,
+                    memberName: member.name,
+                    amount: amount,
+                    date: date
+                };
+                
+                shares.push(shareRecord);
+                saveData();
+                
+                // Log activity
+                logActivity(`Shares recorded for ${member.name}: ${amount} units`);
+                
+                // Reset form and update UI
+                this.reset();
+                document.getElementById('share-date').value = today;
+                updateSharesTable();
+                updateDashboard();
+                updateReports();
+                
+                alert(`Shares recorded successfully for ${member.name}`);
+            });
+            
+            // Issue loan form
+            document.getElementById('issue-loan-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const memberId = document.getElementById('loan-member').value;
+                const amount = parseInt(document.getElementById('loan-amount').value);
+                const interestRate = parseFloat(document.getElementById('loan-interest').value);
+                const term = parseInt(document.getElementById('loan-term').value);
+                const issueDate = document.getElementById('loan-date').value;
+                
+                // Find member
+                const member = members.find(m => m.id === memberId);
+                
+                if (!member) {
+                    alert('Please select a valid member');
+                    return;
+                }
+                
+                // Calculate due date
+                const issueDateObj = new Date(issueDate);
+                const dueDateObj = new Date(issueDateObj);
+                dueDateObj.setMonth(dueDateObj.getMonth() + term);
+                const dueDate = dueDateObj.toISOString().split('T')[0];
+                
+                // Generate loan ID
+                const loanId = 'LN' + String(loans.length + 1).padStart(3, '0');
+                
+                // Create loan record
+                const loanRecord = {
+                    id: loanId,
+                    memberId: memberId,
+                    memberName: member.name,
+                    amount: amount,
+                    interestRate: interestRate,
+                    term: term,
+                    issueDate: issueDate,
+                    dueDate: dueDate,
+                    status: 'Active',
+                    repaidAmount: 0
+                };
+                
+                loans.push(loanRecord);
+                saveData();
+                
+                // Log activity
+                logActivity(`Loan issued to ${member.name}: ${amount} (${loanId})`);
+                
+                // Reset form and update UI
+                this.reset();
+                document.getElementById('loan-interest').value = 10;
+                document.getElementById('loan-term').value = 12;
+                document.getElementById('loan-date').value = today;
+                updateLoansTable();
+                updateDashboard();
+                updateReports();
+                
+                alert(`Loan issued successfully to ${member.name}`);
+            });
+        });
+        
+        // Helper functions
+        function saveData() {
+            localStorage.setItem('members', JSON.stringify(members));
+            localStorage.setItem('shares', JSON.stringify(shares));
+            localStorage.setItem('loans', JSON.stringify(loans));
+            localStorage.setItem('activityLog', JSON.stringify(activityLog));
+        }
+        
+        function logActivity(description) {
+            const activity = {
+                id: 'ACT' + String(activityLog.length + 1).padStart(3, '0'),
+                description: description,
+                timestamp: new Date().toISOString()
+            };
+            
+            activityLog.unshift(activity);
+            
+            // Keep only the last 10 activities
+            if (activityLog.length > 10) {
+                activityLog = activityLog.slice(0, 10);
+            }
+            
+            saveData();
+        }
+        
+        function updateDashboard() {
+            // Update statistics
+            document.getElementById('total-members').textContent = members.length;
+            
+            const totalShares = shares.reduce((sum, share) => sum + share.amount, 0);
+            document.getElementById('total-shares').textContent = totalShares;
+            
+            const totalLoans = loans.reduce((sum, loan) => sum + loan.amount, 0);
+            document.getElementById('total-loans').textContent = totalLoans;
+            
+            const activeLoans = loans.filter(loan => loan.status === 'Active').length;
+            document.getElementById('active-loans').textContent = activeLoans;
+            
+            // Update activity log
+            const activityList = document.getElementById('activity-list');
+            activityList.innerHTML = '';
+            
+            activityLog.forEach(activity => {
+                const date = new Date(activity.timestamp).toLocaleDateString();
+                const time = new Date(activity.timestamp).toLocaleTimeString();
+                
+                const li = document.createElement('li');
+                li.className = 'activity-item';
+                li.innerHTML = `
+                    <span>${activity.description}</span>
+                    <span>${date} ${time}</span>
+                `;
+                
+                activityList.appendChild(li);
+            });
+        }
+        
+        function updateMembersDropdowns() {
+            const memberDropdowns = document.querySelectorAll('select[id$="-member"]');
+            
+            memberDropdowns.forEach(dropdown => {
+                // Clear existing options except the first one
+                while (dropdown.children.length > 1) {
+                    dropdown.removeChild(dropdown.lastChild);
+                }
+                
+                // Add member options
+                members.forEach(member => {
+                    const option = document.createElement('option');
+                    option.value = member.id;
+                    option.textContent = `${member.name} (${member.id})`;
+                    dropdown.appendChild(option);
+                });
+            });
+        }
+        
+        function updateMembersTable() {
+            const tableBody = document.querySelector('#members-table tbody');
+            tableBody.innerHTML = '';
+            
+            members.forEach(member => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${member.id}</td>
+                    <td>${member.name}</td>
+                    <td>${member.phone}</td>
+                    <td>${member.address}</td>
+                    <td>${member.dateJoined}</td>
+                    <td class="action-buttons">
+                        <button class="btn btn-sm btn-secondary" onclick="editMember('${member.id}')">Edit</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteMember('${member.id}')">Delete</button>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+        
+        function updateSharesTable() {
+            const tableBody = document.querySelector('#shares-table tbody');
+            tableBody.innerHTML = '';
+            
+            shares.forEach(share => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${share.id}</td>
+                    <td>${share.memberName} (${share.memberId})</td>
+                    <td>${share.amount}</td>
+                    <td>${share.date}</td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+        
+        function updateLoansTable() {
+            const tableBody = document.querySelector('#loans-table tbody');
+            tableBody.innerHTML = '';
+            
+            loans.forEach(loan => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${loan.id}</td>
+                    <td>${loan.memberName} (${loan.memberId})</td>
+                    <td>${loan.amount}</td>
+                    <td>${loan.interestRate}%</td>
+                    <td>${loan.term} months</td>
+                    <td>${loan.issueDate}</td>
+                    <td>${loan.dueDate}</td>
+                    <td>${loan.status}</td>
+                    <td class="action-buttons">
+                        <button class="btn btn-sm btn-success" onclick="recordRepayment('${loan.id}')">Repay</button>
+                        <button class="btn btn-sm btn-secondary" onclick="viewLoanDetails('${loan.id}')">Details</button>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+        
+        function updateReports() {
+            // Update statistics
+            document.getElementById('report-total-members').textContent = members.length;
+            
+            const totalShares = shares.reduce((sum, share) => sum + share.amount, 0);
+            document.getElementById('report-total-shares').textContent = totalShares;
+            
+            const totalLoans = loans.reduce((sum, loan) => sum + loan.amount, 0);
+            document.getElementById('report-total-loans').textContent = totalLoans;
+            
+            const activeLoans = loans.filter(loan => loan.status === 'Active').length;
+            document.getElementById('report-active-loans').textContent = activeLoans;
+            
+            // Update financial summary
+            document.getElementById('summary-total-shares').textContent = totalShares;
+            document.getElementById('summary-total-loans').textContent = totalLoans;
+            
+            const totalInterest = loans.reduce((sum, loan) => {
+                const interest = (loan.amount * loan.interestRate / 100) * (loan.term / 12);
+                return sum + interest;
+            }, 0);
+            document.getElementById('summary-total-interest').textContent = Math.round(totalInterest);
+            
+            const totalRepayments = loans.reduce((sum, loan) => sum + loan.repaidAmount, 0);
+            document.getElementById('summary-total-repayments').textContent = totalRepayments || 0;
+            
+            const netPosition = totalShares + totalRepayments - totalLoans;
+            document.getElementById('summary-net-position').textContent = netPosition;
+            
+            // Update member shares summary
+            const memberSharesTable = document.querySelector('#member-shares-table tbody');
+            memberSharesTable.innerHTML = '';
+            
+            members.forEach(member => {
+                const memberShares = shares
+                    .filter(share => share.memberId === member.id)
+                    .reduce((sum, share) => sum + share.amount, 0);
+                
+                const lastContribution = shares
+                    .filter(share => share.memberId === member.id)
+                    .sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${member.id}</td>
+                    <td>${member.name}</td>
+                    <td>${memberShares}</td>
+                    <td>${lastContribution ? lastContribution.date : 'None'}</td>
+                `;
+                
+                memberSharesTable.appendChild(row);
+            });
+        }
+        
+        // Additional functions for member and loan management
+        function editMember(memberId) {
+            const member = members.find(m => m.id === memberId);
+            if (member) {
+                const newName = prompt('Enter new name:', member.name);
+                if (newName) member.name = newName;
+                
+                const newPhone = prompt('Enter new phone:', member.phone);
+                if (newPhone) member.phone = newPhone;
+                
+                const newAddress = prompt('Enter new address:', member.address);
+                if (newAddress) member.address = newAddress;
+                
+                saveData();
+                updateMembersTable();
+                updateMembersDropdowns();
+                updateReports();
+                
+                logActivity(`Member ${memberId} details updated`);
+            }
+        }
+        
+        function deleteMember(memberId) {
+            if (confirm('Are you sure you want to delete this member? This action cannot be undone.')) {
+                const memberIndex = members.findIndex(m => m.id === memberId);
+                if (memberIndex !== -1) {
+                    const memberName = members[memberIndex].name;
+                    members.splice(memberIndex, 1);
+                    
+                    // Also remove associated shares and loans
+                    shares = shares.filter(share => share.memberId !== memberId);
+                    loans = loans.filter(loan => loan.memberId !== memberId);
+                    
+                    saveData();
+                    updateMembersTable();
+                    updateMembersDropdowns();
+                    updateSharesTable();
+                    updateLoansTable();
+                    updateDashboard();
+                    updateReports();
+                    
+                    logActivity(`Member ${memberName} (${memberId}) deleted`);
+                }
+            }
+        }
+        
+        function recordRepayment(loanId) {
+            const loan = loans.find(l => l.id === loanId);
+            if (loan) {
+                const repaymentAmount = prompt(`Enter repayment amount for loan ${loanId}:`, 
+                    Math.ceil(loan.amount / loan.term));
+                
+                if (repaymentAmount && !isNaN(repaymentAmount)) {
+                    const amount = parseInt(repaymentAmount);
+                    loan.repaidAmount = (loan.repaidAmount || 0) + amount;
+                    
+                    // Check if loan is fully repaid
+                    const totalDue = loan.amount + (loan.amount * loan.interestRate / 100) * (loan.term / 12);
+                    if (loan.repaidAmount >= totalDue) {
+                        loan.status = 'Repaid';
+                    }
+                    
+                    saveData();
+                    updateLoansTable();
+                    updateDashboard();
+                    updateReports();
+                    
+                    logActivity(`Repayment recorded for loan ${loanId}: ${amount}`);
+                    alert(`Repayment of ${amount} recorded successfully for loan ${loanId}`);
+                }
+            }
+        }
+        
+        function viewLoanDetails(loanId) {
+            const loan = loans.find(l => l.id === loanId);
+            if (loan) {
+                const totalInterest = (loan.amount * loan.interestRate / 100) * (loan.term / 12);
+                const totalDue = loan.amount + totalInterest;
+                const remaining = totalDue - (loan.repaidAmount || 0);
+                
+                alert(`Loan Details:
+ID: ${loan.id}
+Member: ${loan.memberName}
+Amount: ${loan.amount}
+Interest Rate: ${loan.interestRate}%
+Term: ${loan.term} months
+Issue Date: ${loan.issueDate}
+Due Date: ${loan.dueDate}
+Status: ${loan.status}
+Total Due: ${Math.ceil(totalDue)}
+Amount Repaid: ${loan.repaidAmount || 0}
+Remaining: ${Math.ceil(remaining)}`);
+            }
+        }
+    </script>
+</body>
+</html>
